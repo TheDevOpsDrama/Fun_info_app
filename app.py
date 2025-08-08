@@ -1,45 +1,41 @@
 from flask import Flask, render_template, request
+import requests
 
 app = Flask(__name__)
 
-@app.route('/')
+def get_cat_fact():
+    try:
+        r = requests.get("https://catfact.ninja/fact")
+        return r.json().get("fact", "Couldn't fetch a cat fact 😿")
+    except:
+        return "Cat fact service not available."
+
+def get_joke():
+    try:
+        r = requests.get("https://official-joke-api.appspot.com/random_joke")
+        data = r.json()
+        return f"{data['setup']} - {data['punchline']}"
+    except:
+        return "Joke service not available."
+
+def get_weather(city="Mumbai"):
+    try:
+        r = requests.get(f"https://wttr.in/{city}?format=%C+%t")
+        return r.text.strip()
+    except:
+        return "Weather service not available."
+
+@app.route("/", methods=["GET", "POST"])
 def home():
-    return '''
-        <h2>Welcome to Fun Info App</h2>
-        <form method="post" action="/result">
-            <label>Enter your name:</label>
-            <input type="text" name="username">
-            <input type="submit" value="Submit">
-        </form>
-    '''
+    cat_fact = None
+    joke = None
+    weather = None
+    if request.method == "POST":
+        city = request.form.get("city", "Mumbai")
+        cat_fact = get_cat_fact()
+        joke = get_joke()
+        weather = get_weather(city)
+    return render_template("index.html", cat_fact=cat_fact, joke=joke, weather=weather)
 
-@app.route('/result', methods=['POST'])
-def result():
-    name = request.form['username']
-    # You can add your logic here to fetch fun info
-    return f"<h3>Hello, {name}! This is your fun info result.</h3>"
-
-if __name__ == '_main_':
-    app.run(debug=True)
-from flask import Flask, request
-
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return '''
-        <h2>Welcome to Fun Info App</h2>
-        <form method="post" action="/result">
-            <label>Enter your name:</label>
-            <input type="text" name="username">
-            <input type="submit" value="Submit">
-        </form>
-    '''
-
-@app.route('/result', methods=['POST'])
-def result():
-    name = request.form['username']
-    return f"<h3>Hello, {name}! This is your fun info result.</h3>"
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)

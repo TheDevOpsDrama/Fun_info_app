@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fun Info App</title>
+</head>
+<body>
+    <h1>Fun Info App 🎉</h1>
+    <form method="POST">
+        <input type="text" name="city" placeholder="City for weather" value="Mumbai">
+        <button type="submit">Get Fun Info</button>
+    </form>
+
+    {% if cat_fact %}
+        <h2>🐱 Cat Fact:</h2>
+        <p>{{ cat_fact }}</p>
+    {% endif %}
+
+    {% if joke %}
+        <h2>😂 Joke:</h2>
+        <p>{{ joke }}</p>
+    {% endif %}
+
+    {% if weather %}
+        <h2>☀️ Weather:</h2>
+        <p>{{ weather }}</p>
+    {% endif %}
+</body>
+</html>
